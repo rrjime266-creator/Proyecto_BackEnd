@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Crear viaje</title>
+	<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="login-page">
+	<main class="login-card account-card">
+		<a class="logo-link" href="http://127.0.0.1:8000/usuario/" aria-label="Ir a mi espacio"><img class="login-logo" src="{% static 'img/recorteCircular_FlyNote.png' %}" alt="Logo de Diario de viajes"></a>
+		<h1>Crear viaje</h1>
+		<p class="login-subtitle">Agrega una nueva aventura a tu diario.</p>
+
+		<form method="post" class="login-form account-form">
+			{% csrf_token %}
+			{% for field in form %}
+				<div class="form-field">
+					<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+					{{ field }}
+					{% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+				</div>
+			{% endfor %}
+			<button type="submit">Guardar viaje</button>
+		</form>
+		<p class="account-link"><a class="back-to-trips-button" href="{% url 'usuario' %}">Volver a mis viajes</a></p>
+	</main>
+</body>
+</html>

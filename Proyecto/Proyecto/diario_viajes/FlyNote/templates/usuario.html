@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista de usuario</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="user-page">
+    <details class="account-menu">
+        <summary class="logout-button" title="Abrir opciones de cuenta" aria-label="Abrir opciones de cuenta">{{ request.user.username|first|upper }}</summary>
+        <div class="account-options">
+            <form method="post" action="{% url 'cerrar_sesion' %}">
+                {% csrf_token %}
+                <button type="submit">Salir</button>
+            </form>
+            <form method="post" action="{% url 'eliminar_cuenta' %}">
+                {% csrf_token %}
+                <button type="submit" class="delete-account-button">Eliminar cuenta</button>
+            </form>
+        </div>
+    </details>
+    <main class="user-panel">
+        <a class="logo-link" href="http://127.0.0.1:8000/usuario/" aria-label="Ir a mi espacio"><img class="login-logo" src="{% static 'img/recorteCircular_FlyNote.png' %}" alt="Logo de Diario de viajes"></a>
+        <div class="user-heading">
+            <h1>Hola, {{ request.user.username }}</h1>
+            <a href="{% url 'crear_viaje' %}" class="create-trip-button">Crear viaje</a>
+        </div>
+        <p class="login-subtitle">Este es tu Diario de viajes.</p>
+
+        <section class="trip-list" aria-labelledby="trip-list-title">
+            <h2 id="trip-list-title">Mis viajes</h2>
+            <nav class="trip-filters" aria-label="Filtrar viajes">
+                <a href="{% url 'usuario' %}" class="trip-filter-button trip-filter-all{% if filtro_actual == 'todos' %} active{% endif %}">Todos</a>
+                <a href="{% url 'usuario' %}?estado=completado" class="trip-filter-button trip-filter-completed{% if filtro_actual == 'completado' %} active{% endif %}">Completados</a>
+                <a href="{% url 'usuario' %}?estado=en_progreso" class="trip-filter-button trip-filter-progress{% if filtro_actual == 'en_progreso' %} active{% endif %}">En progreso</a>
+                <a href="{% url 'usuario' %}?estado=planificado" class="trip-filter-button trip-filter-planned{% if filtro_actual == 'planificado' %} active{% endif %}">Planificados</a>
+            </nav>
+            {% for viaje in viajes %}
+                <article class="trip-item trip-{{ viaje.estado }}">
+                    <div>
+                        <h3>{{ viaje.destino }}, {{ viaje.pais }}</h3>
+                        <p>{{ viaje.fecha_inicio|date:'d/m/Y' }} al {{ viaje.fecha_termino|date:'d/m/Y' }}</p>
+                    </div>
+                    <div class="trip-actions">
+                        <strong>{{ viaje.get_estado_display }}</strong>
+                        <a href="{% url 'editar_viaje' viaje.id %}" class="edit-trip-button">Editar viaje</a>
+                    </div>
+                    {% if viaje.notas %}<p class="trip-notes">{{ viaje.notas }}</p>{% endif %}
+                </article>
+            {% empty %}
+                <p class="empty-trips">Todavía no has agregado viajes.</p>
+            {% endfor %}
+        </section>
+
+        {% include 'lineaTiempo.html' %}
+    </main>
+</body>
+</html>

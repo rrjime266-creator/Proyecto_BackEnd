@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Edición de administración</title>
+	<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="admin-page">
+	<details class="account-menu">
+		<summary class="logout-button" title="Abrir opciones de cuenta" aria-label="Abrir opciones de cuenta">{{ request.user.username|first|upper }}</summary>
+		<div class="account-options">
+			<form method="post" action="{% url 'cerrar_sesion' %}">
+				{% csrf_token %}
+				<button type="submit">Salir</button>
+			</form>
+			<form method="post" action="{% url 'eliminar_cuenta' %}">
+				{% csrf_token %}
+				<button type="submit" class="delete-account-button">Borrar cuenta</button>
+			</form>
+		</div>
+	</details>
+	<main class="admin-users-panel">
+		<a class="logo-link" href="http://127.0.0.1:8000/usuario/" aria-label="Ir a mi espacio"><img class="login-logo" src="{% static 'img/recorteCircular_FlyNote.png' %}" alt="Logo de Diario de viajes"></a>
+		<span class="brand-context">Administración</span>
+		<div class="admin-heading">
+			<div>
+				<h1>Viajes de {{ usuario.username }}</h1>
+				<p class="login-subtitle">Historial de viajes creados por este usuario.</p>
+			</div>
+			<a href="{% url 'admin_usuarios' %}" class="admin-back-button">Volver a usuarios</a>
+		</div>
+
+		<section class="trip-list admin-trip-list" aria-label="Viajes del usuario">
+			{% for viaje in viajes %}
+				<article class="trip-item trip-{{ viaje.estado }}">
+					<div>
+						<h3>{{ viaje.destino }}, {{ viaje.pais }}</h3>
+						<p>{{ viaje.fecha_inicio|date:'d/m/Y' }} al {{ viaje.fecha_termino|date:'d/m/Y' }}</p>
+					</div>
+					<div class="admin-trip-actions">
+						<strong>{{ viaje.get_estado_display }}</strong>
+						<a href="{% url 'admin_editar_viaje' viaje.id %}" class="edit-trip-button">Editar</a>
+						<form method="post" action="{% url 'admin_eliminar_viaje' viaje.id %}" class="delete-trip-form">
+							{% csrf_token %}
+							<details class="delete-confirmation">
+								<summary class="admin-delete-button">Eliminar</summary>
+								<div class="delete-confirmation-content">
+									<strong>¿Seguro?</strong>
+									<div class="delete-confirmation-actions">
+										<button type="submit" class="delete-accept-button">Eliminar</button>
+										<button type="button" class="delete-cancel-button" onclick="this.closest('details').removeAttribute('open')">Cancelar</button>
+									</div>
+								</div>
+							</details>
+						</form>
+					</div>
+					{% if viaje.notas %}<p class="trip-notes">{{ viaje.notas }}</p>{% endif %}
+				</article>
+			{% empty %}
+				<p class="empty-trips">Este usuario todavía no ha creado viajes.</p>
+			{% endfor %}
+		</section>
+	</main>
+</body>
+</html>

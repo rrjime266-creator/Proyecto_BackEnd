@@ -1,0 +1,17 @@
+<section class="travel-timeline" aria-labelledby="timeline-title">
+	<h2 id="timeline-title">Línea de tiempo</h2>
+	<div class="timeline-track">
+		{% for viaje in todos_los_viajes %}
+			<article class="timeline-entry timeline-{{ viaje.estado }}">
+				<div class="timeline-marker"></div>
+				<div class="timeline-date">{{ viaje.fecha_inicio|date:'d/m/Y' }}</div>
+				<div class="timeline-content">
+					<h3>{{ viaje.destino }}, {{ viaje.pais }}</h3>
+					<p>{{ viaje.get_estado_display }}</p>
+				</div>
+			</article>
+		{% empty %}
+			<p class="empty-trips">La línea de tiempo aparecerá cuando agregues un viaje.</p>
+		{% endfor %}
+	</div>
+</section>

@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Crear cuenta</title>
+	<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="login-page">
+	<main class="login-card account-card">
+		<a class="logo-link" href="http://127.0.0.1:8000/usuario/" aria-label="Ir a mi espacio"><img class="login-logo" src="{% static 'img/recorteCircular_FlyNote.png' %}" alt="Logo de Diario de viajes"></a>
+		<h1>Crear cuenta</h1>
+		<p class="login-subtitle">Registra tus viajes y conserva cada aventura.</p>
+
+		<form method="post" class="login-form account-form">
+			{% csrf_token %}
+			{% for field in form %}
+				<div class="form-field">
+					{% if field.name == 'password1' %}
+						<div class="password-label">
+							<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+							<button type="button" class="password-toggle" data-password-targets="{{ field.id_for_label }} id_password2" aria-pressed="false" aria-label="Mostrar contraseña">Mostrar</button>
+						</div>
+						<div class="password-field">
+							{{ field }}
+						</div>
+					{% else %}
+						<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+						{{ field }}
+					{% endif %}
+					{% if field.help_text %}<small class="field-help">{{ field.help_text|safe }}</small>{% endif %}
+					{% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+				</div>
+			{% endfor %}
+			<button type="submit" class="create-account-submit">Crear cuenta</button>
+		</form>
+		<p class="account-link">¿Ya tienes una cuenta? <a href="{% url 'inicio' %}">Iniciar sesión</a></p>
+	</main>
+	<script src="{% static 'app.js' %}"></script>
+</body>
+</html>
